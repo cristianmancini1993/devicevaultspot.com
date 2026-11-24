@@ -15,8 +15,11 @@ jobs:
         id: check
         run: |
           if [ -z "${{ secrets.DEPLOY_SSH_KEY }}" ]; then
-            echo "DEPLOY_SSH_KEY not set — skipping deploy"
+            echo "::error::DEPLOY_SSH_KEY is not configured in repo secrets — deploy did not run."
             echo "ready=no" >> "$GITHUB_OUTPUT"
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+              exit 1
+            fi
           else
             echo "ready=yes" >> "$GITHUB_OUTPUT"
           fi
